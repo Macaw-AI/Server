@@ -1,6 +1,6 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-admin.initializeApp();
+
 
 exports.getSubjectList = functions.https.onRequest(async (req, res) => {
   const storage = admin.storage();

@@ -1,25 +1,17 @@
 const functions = require('firebase-functions');
-const admin = require('firebase-admin');
-admin.initializeApp();
+
 
 exports.getTeacherList = functions.https.onRequest(async (req, res) => {
-  const storage = admin.storage();
-  const options = {
-    prefix: `Scenarios/${req.body.data["language"]}/teachers/`,
-  };
-
-  const [files] = await storage.bucket().getFiles(options);
-  let promises = [];
-  for (const file of files) {
-    if(file.name.endsWith('.json')){
-        promises.push(file.download().then(data => {
-        return JSON.parse(data.toLocaleString());
-    }));
+    if (!req.body?.language) {
+        res.status(400).send({listOfTeacher: [], error: "Missing language in request body"});
+        return;
     }
-    
-  }
 
-  const teacherList = await Promise.all(promises);
-  res.status(200).send({ listOfTeacher: teacherList });
-  
+    require('./common/download')
+        .downloadFiles(`Scenarios/${req.body.language}/teachers/`)
+        .then((teacherList) => {
+            res.status(200).send({listOfTeacher: teacherList, error: ""});
+        }).catch((error) => {
+        res.status(500).send({listOfTeacher: [], error: error});
+    });
 });

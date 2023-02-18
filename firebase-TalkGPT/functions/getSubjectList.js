@@ -1,6 +1,4 @@
 const functions = require('firebase-functions');
-const admin = require('firebase-admin');
-
 
 exports.getSubjectList = functions.https.onRequest(async (req, res) => {
     const {error} = require('./common/validators')
@@ -12,8 +10,7 @@ exports.getSubjectList = functions.https.onRequest(async (req, res) => {
 
     const download = require('./common/download');
     const teacher = await download.downloadFile(`Scenarios/${req.body.language}/teachers/${req.body.teacher}.json`)
-    const subjectList = teacher.confidential.related_subjects;
-    console.log(subjectList);
+    const subjectList = teacher["related_subjects"];
 
     let subjectsPromises = [];
     let errors = [];
@@ -36,6 +33,6 @@ exports.getSubjectList = functions.https.onRequest(async (req, res) => {
     } else {
         res.status(500)
     }
-    res.send({listOfSubjects: subjects, errors: errors.join(", ")});
+    res.send({listOfSubjects: subjects, error: errors.join(", ")});
 
 });

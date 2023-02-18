@@ -1,13 +1,7 @@
-const gpt3response = require('./gpt3response');
-const formatter = require('./formatter');
-const tts = require('./tts');
-const text_to_response = require('./text_to_response');
+const textToResponse = require('./textToResponse');
 const getTeacherList = require("./getTeacherList");
 const getSubjectList = require("./getSubjectList");
 
-exports.gpt3response = gpt3response.gpt3response;
-exports.formatter = formatter.formatter;
-exports.tts = tts.tts;
-exports.text_to_response = text_to_response.text_to_response;
+exports.textToResponse = textToResponse.textToResponse;
 exports.getTeacherList = getTeacherList.getTeacherList;
 exports.getSubjectList = getSubjectList.getSubjectList;

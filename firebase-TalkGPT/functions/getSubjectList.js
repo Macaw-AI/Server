@@ -3,23 +3,39 @@ const admin = require('firebase-admin');
 
 
 exports.getSubjectList = functions.https.onRequest(async (req, res) => {
-  const storage = admin.storage();
-  const options = {
-    prefix: `Scenarios/${req.body.data["language"]}/subjects/`,
-  };
-
-  const [files] = await storage.bucket().getFiles(options);
-  let promises = [];
-  for (const file of files) {
-    if(file.name.endsWith('.json')){
-        promises.push(file.download().then(data => {
-        return JSON.parse(data.toLocaleString());
-    }));
+    const {error} = require('./common/validators')
+        .validateKeys(req.body, ['language', 'teacher'])
+    if (error) {
+        res.status(400).send({listOfSubjects: [], error: error});
+        return;
     }
-    
-  }
 
-  const subjectList = await Promise.all(promises);
-  res.status(200).send({ listOfSubjects: subjectList });
-  
+    const download = require('./common/download');
+    const teacher = await download.downloadFile(`Scenarios/${req.body.language}/teachers/${req.body.teacher}.json`)
+    const subjectList = teacher.confidential.related_subjects;
+    console.log(subjectList);
+
+    let subjectsPromises = [];
+    let errors = [];
+    let subjects = [];
+
+    for (const subjectName of subjectList) {
+        subjectsPromises.push(download.downloadFile(`Scenarios/${req.body.language}/subjects/${subjectName}`));
+    }
+    subjectsPromises.forEach((subjectPromise) => {
+        subjectPromise.then((subject) => {
+            subjects.push(subject);
+        }).catch((error) => {
+            errors.push(error);
+        });
+    });
+    await Promise.all(subjectsPromises);
+
+    if (subjects.length > 0) {
+        res.status(200)
+    } else {
+        res.status(500)
+    }
+    res.send({listOfSubjects: subjects, errors: errors.join(", ")});
+
 });

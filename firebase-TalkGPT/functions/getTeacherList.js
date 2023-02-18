@@ -10,7 +10,7 @@ exports.getTeacherList = functions.https.onRequest(async (req, res) => {
     }
 
     require('./common/download')
-        .downloadFiles(`Scenarios/${req.body.language}/teachers/`, '.json')
+        .downloadFiles(`Scenarios/${req.body.language}/teachers/`)
         .then((teacherList) => {
             res.status(200).send({listOfTeacher: teacherList});
         }).catch((error) => {

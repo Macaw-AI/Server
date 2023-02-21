@@ -1,6 +1,6 @@
 const functions = require('firebase-functions');
 
-exports.getSubjectList = functions.https.onRequest(async (req, res) => {
+exports.getSubjectList = functions.region('europe-west1').https.onRequest(async (req, res) => {
     const {error} = require('./common/validators')
         .validateKeys(req.body, ['language', 'teacher'])
     if (error) {

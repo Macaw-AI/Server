@@ -38,7 +38,7 @@ async function getBotResponse(prompt, teacher, student) {
     return {gpt3Response, audioBase64};
 }
 
-exports.textToResponse = functions.https.onRequest(async (req, res) => {
+exports.textToResponse = functions.region('europe-west1').https.onRequest(async (req, res) => {
     const {error} = require('./common/validators')
         .validateKeys(req.body, ['teacher', 'student', 'subject'])
     if (error) {

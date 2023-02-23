@@ -3,7 +3,7 @@ const functions = require("firebase-functions");
 
 const {createPrompt, getGPT3Response} = require('../production/textToResponse');
 
-exports.textToGPT = functions.https.onRequest(async (req, res) => {
+exports.textToGPT = functions.region('europe-west1').https.onRequest(async (req, res) => {
     const {error} = require('../common/validators')
         .validateKeys(req.body, ['teacher', 'student', 'subject'])
     if (error) {

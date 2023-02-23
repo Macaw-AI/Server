@@ -5,7 +5,7 @@ exports.getPrompt = functions.region('europe-west1').https.onRequest(async (req,
     const {error} = require('../common/validators')
         .validateKeys(req.body, ['teacher', 'student', 'subject'])
     if (error) {
-        res.status(400).send({response: '', prompt: '', audio: '', error: error});
+        res.status(400).send({prompt: '', error: error});
         return;
     }
     const {teacher, student, subject} = req.body;

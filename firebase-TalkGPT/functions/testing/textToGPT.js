@@ -14,7 +14,7 @@ exports.textToGPT = functions.region('europe-west1').https.onRequest(async (req,
     const prompt = createPrompt(teacher, student, subject);
 
     getGPT3Response(prompt, teacher, student)
-        .then(({gpt3Response, audioBase64}) => {
+        .then(({gpt3Response}) => {
             res.status(200).send({response: gpt3Response, prompt: prompt, error: ''});
         }).catch((error) => {
             res.status(500).send({response: '', prompt: prompt, error: error});

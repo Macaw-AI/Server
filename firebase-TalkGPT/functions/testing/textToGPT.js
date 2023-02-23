@@ -13,7 +13,7 @@ exports.textToGPT = functions.region('europe-west1').https.onRequest(async (req,
     const {teacher, student, subject} = req.body;
     const prompt = createPrompt(teacher, student, subject);
 
-    await getGPT3Response(prompt, teacher, student)
+    getGPT3Response(prompt, teacher, student)
         .then((gpt3Response) => {
             res.status(200).send({gpt3Response: gpt3Response, prompt: prompt, error: ''});
         }).catch((error) => {

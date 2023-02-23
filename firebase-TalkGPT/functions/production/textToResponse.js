@@ -35,7 +35,7 @@ async function getTTSResponse(gpt3Response, teacher) {
     const request = {
         input: {text: gpt3Response},
         voice: teacher["TTS"].voice,
-        audioConfig: {audioEncoding: 'MP3'}, // teacher["TTS"].audioConfig
+        audioConfig: teacher["TTS"].audioConfig,
     };
 
     const [response] = await client.synthesizeSpeech(request);

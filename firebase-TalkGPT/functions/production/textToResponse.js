@@ -30,7 +30,7 @@ async function getGPT3Response(prompt, teacher, student) {
 
 exports.getGPT3Response = getGPT3Response;
 
-async function getTTSResponse(gpt3Response, teacher) {
+async function getTTSGoogleResponse(gpt3Response, teacher) {
     const client = new textToSpeech.TextToSpeechClient();
     const request = {
         input: {text: gpt3Response},
@@ -43,11 +43,18 @@ async function getTTSResponse(gpt3Response, teacher) {
     return Buffer.from(audio, 'binary').toString('base64');
 }
 
-exports.getTTSResponse = getTTSResponse;
+exports.getTTSGoogleResponse = getTTSGoogleResponse;
 
 async function getBotResponse(prompt, teacher, student) {
     const gpt3Response = await getGPT3Response(prompt, teacher, student);
-    const audioBase64 = await getTTSResponse(gpt3Response, teacher);
+
+    // if (teacher["TTS"].audioConfig){
+    const audioBase64 = await getTTSGoogleResponse(gpt3Response, teacher);
+    // }
+    // else if (teacher["TTS"].begin) {
+    //     const audioBase64 = await getTTSAzureResponse(gpt3Response, teacher);
+    // }
+
     return {gpt3Response, audioBase64};
 
 }

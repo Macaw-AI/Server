@@ -8,7 +8,7 @@ exports.getSubjectList = functions.region('europe-west1').https.onRequest(async 
         return;
     }
 
-    const download = require('./common/download');
+    const download = require('../common/download');
     const teacher = await download.downloadFile(`Scenarios/${req.body.language}/teachers/${req.body.teacher}.json`)
     const subjectList = teacher["related_subjects"];
 

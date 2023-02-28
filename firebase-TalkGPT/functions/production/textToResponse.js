@@ -12,7 +12,9 @@ function createPrompt(teacher, student, subject) {
     ${student.text}`;
 }
 
-async function getBotResponse(prompt, teacher, student) {
+exports.createPrompt = createPrompt;
+
+async function getGPT3Response(prompt, teacher, student) {
     const openai = new OpenAIApi(configuration);
     const completion = await openai.createCompletion({
         model: student.model,
@@ -21,23 +23,43 @@ async function getBotResponse(prompt, teacher, student) {
         max_tokens: 1500,
         stop: [`${teacher.name}:`, `${student.name}:`, "Student:"],
     });
-    const gpt3Response = completion.data.choices[0].text;
+    return completion.data.choices[0].text;
+}
 
+exports.getGPT3Response = getGPT3Response;
+
+async function getTTSGoogleResponse(gpt3Response, teacher) {
     const client = new textToSpeech.TextToSpeechClient();
     const request = {
         input: {text: gpt3Response},
         voice: teacher["TTS"].voice,
-        audioConfig: {audioEncoding: 'MP3'}, // teacher["TTS"].audioConfig
+        audioConfig: teacher["TTS"].audioConfig,
     };
 
     const [response] = await client.synthesizeSpeech(request);
     const audio = response.audioContent;
-    const audioBase64 = Buffer.from(audio, 'binary').toString('base64');
-    return {gpt3Response, audioBase64};
+    return Buffer.from(audio, 'binary').toString('base64');
 }
 
-exports.textToResponse = functions.https.onRequest(async (req, res) => {
-    const {error} = require('./common/validators')
+exports.getTTSGoogleResponse = getTTSGoogleResponse;
+
+async function getBotResponse(prompt, teacher, student) {
+    const gpt3Response = await getGPT3Response(prompt, teacher, student);
+
+    // if (teacher["TTS"].audioConfig){
+    const audioBase64 = await getTTSGoogleResponse(gpt3Response, teacher);
+    // }
+    // else if (teacher["TTS"].begin) {
+    //     const audioBase64 = await getTTSAzureResponse(gpt3Response, teacher);
+    // }
+
+    return {gpt3Response, audioBase64};
+
+}
+
+
+exports.textToResponse = functions.region('europe-west1').https.onRequest(async (req, res) => {
+    const {error} = require('../common/validators')
         .validateKeys(req.body, ['teacher', 'student', 'subject'])
     if (error) {
         res.status(400).send({response: '', prompt: '', audio: '', error: error});

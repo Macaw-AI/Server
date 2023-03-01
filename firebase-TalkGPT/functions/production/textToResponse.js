@@ -5,11 +5,11 @@ const configuration = new Configuration({
 });
 const textToSpeech = require('@google-cloud/text-to-speech');
 
-function createPrompt(teacher, student, subject) {
+function createPrompt(teacher, student, subject,text) {
     return `Response as my Teacher (${teacher.name},${teacher.character}). I am your Student(${student.name},${student.age}).
     During our conversation you should ask me about ${subject.name} and ${subject.questions} and let us debate about ${subject.related}.
     Remember to ask ONLY ONE question at the time and be curious obout my opinion and point of view.YOU start the conversation as a teacher. Below is a record of our recent quotes:
-    ${student.text}`;
+    ${text}`;
 }
 
 exports.createPrompt = createPrompt;
@@ -60,13 +60,13 @@ async function getBotResponse(prompt, teacher, student) {
 
 exports.textToResponse = functions.region('europe-west1').https.onRequest(async (req, res) => {
     const {error} = require('../common/validators')
-        .validateKeys(req.body, ['teacher', 'student', 'subject'])
+        .validateKeys(req.body, ['teacher', 'student', 'subject', 'text'])
     if (error) {
         res.status(400).send({response: '', prompt: '', audio: '', error: error});
         return;
     }
-    const {teacher, student, subject} = req.body;
-    const prompt = createPrompt(teacher, student, subject);
+    const {teacher, student, subject, text} = req.body;
+    const prompt = createPrompt(teacher, student, subject,text);
 
     getBotResponse(prompt, teacher, student)
         .then(({gpt3Response, audioBase64}) => {

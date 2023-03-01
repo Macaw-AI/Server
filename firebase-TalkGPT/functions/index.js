@@ -1,3 +1,4 @@
+
 const textToResponse = require('./production/textToResponse');
 const getTeacherList = require("./production/getTeacherList");
 const getSubjectList = require("./production/getSubjectList");

@@ -8,8 +8,8 @@ exports.getPrompt = functions.region('europe-west1').https.onRequest(async (req,
         res.status(400).send({prompt: '', error: error});
         return;
     }
-    const {teacher, student, subject} = req.body;
-    const prompt = createPrompt(teacher, student, subject);
+    const {teacher, student, subject, text} = req.body;
+    const prompt = createPrompt(teacher, student, subject, text);
 
     res.status(200).send({prompt: prompt, error: ''});
 });

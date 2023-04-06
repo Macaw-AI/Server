@@ -10,6 +10,8 @@ exports.getSubjectList = getSubjectList.getSubjectList;
 
 const textToText = require("./testing/textToGPT");
 const getPrompt = require("./testing/getPrompt");
+const chatToResponse = require("./testing/chatToResponse");
 
 exports.textToGPT = textToText.textToGPT;
 exports.getPrompt = getPrompt.getPrompt;
+exports.chatToResponse = chatToResponse.chatToResponse;

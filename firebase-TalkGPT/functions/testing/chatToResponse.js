@@ -16,7 +16,6 @@ const CHAT_MODELS = [
 
 async function getGPTMessage(prompt, chat) {
     const openai = new OpenAIApi(configuration);
-    console.log("messages: " + JSON.stringify([{role: "system", content: prompt}].concat(chat)));
     const completion = await openai.createChatCompletion({
         model: CHAT_MODELS[0],
         messages: [{role: "system", content: prompt}].concat(chat),

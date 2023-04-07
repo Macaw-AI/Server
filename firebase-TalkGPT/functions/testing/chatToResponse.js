@@ -16,9 +16,15 @@ const CHAT_MODELS = [
 
 async function getGPTMessage(prompt, chat) {
     const openai = new OpenAIApi(configuration);
+
+    let previousChat = chat;
+    if (chat.length === 0) {
+        startedNewConversation();
+        previousChat = [{"role": "assistant", "content": "Hi..."}];
+    }
     const completion = await openai.createChatCompletion({
         model: CHAT_MODELS[0],
-        messages: [{role: "system", content: prompt}].concat(chat),
+        messages: [{role: "system", content: prompt}].concat(previousChat),
         temperature: 0.80,
         max_tokens: 1500,
     });
@@ -38,6 +44,10 @@ async function getBotResponse(prompt, teacher, chat) {
 
     return {audioBase64};
 
+}
+
+//  TODO save to DB
+function startedNewConversation(chat) {
 }
 
 exports.chatToResponse = functions.region('europe-west1').https.onRequest(async (req, res) => {
